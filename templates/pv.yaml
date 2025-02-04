@@ -1,0 +1,16 @@
+{{- if .Values.postgresql.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "counter-application.fullname" . }}-postgres-pv
+  labels:
+    {{- include "counter-application.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.postgresql.storage.size | quote }}
+  accessModes:
+    - {{ .Values.postgresql.storage.accessMode | quote }}
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/data/postgres
+{{- end }}

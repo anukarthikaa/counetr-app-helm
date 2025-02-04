@@ -1,0 +1,46 @@
+{{- if .Values.postgresql.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "counter-application.fullname" . }}-postgres
+  labels:
+    {{- include "counter-application.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "counter-application.fullname" . }}-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "counter-application.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "counter-application.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgresql.image }}
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.dbName | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.dbUser | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgresql.dbPassword | quote }}
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes:
+          - {{ .Values.postgresql.storage.accessMode | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.storage.size | quote }}
+        {{- if .Values.postgresql.storage.storageClass }}
+        storageClassName: {{ .Values.postgresql.storage.storageClass | quote }}
+        {{- end }}
+{{- end }}

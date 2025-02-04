@@ -1,0 +1,17 @@
+{{- if .Values.postgresql.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "counter-application.fullname" . }}-postgres-pvc
+  labels:
+    {{- include "counter-application.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.postgresql.storage.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.storage.size | quote }}
+  {{- if .Values.postgresql.storage.storageClass }}
+  storageClassName: {{ .Values.postgresql.storage.storageClass | quote }}
+  {{- end }}
+{{- end }}

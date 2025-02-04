@@ -1,0 +1,20 @@
+postgresql:
+  enabled: true
+  image: postgres:latest
+  dbName: counterdb
+  dbUser: admin
+  dbPassword: password
+  storage:
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    storageClass: ""
+
+ui:
+  enabled: true
+  image:  anukarthikaa/counter-app:v4 
+  replicaCount: 1
+  ports:
+    - containerPort: 3000
+  service:
+    type: ClusterIP
+    port: 3000

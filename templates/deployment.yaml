@@ -1,0 +1,28 @@
+{{- if .Values.ui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "counter-application.fullname" . }}-ui
+  labels:
+    {{- include "counter-application.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ui.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "counter-application.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "counter-application.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: ui
+          image: {{ .Values.ui.image }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "counter-application.fullname" . }}-postgres-config
+          ports:
+            - containerPort: {{ .Values.ui.service.port }}
+          resources:
+            {{- toYaml .Values.ui.resources | nindent 12 }}
+{{- end }}
