@@ -1,4 +1,4 @@
-# counetr-app-helm
+# counter-app-helm
 # Helm Chart for Counter Application
 
 This Helm chart deploys a simple Kubernetes application with two main components:
